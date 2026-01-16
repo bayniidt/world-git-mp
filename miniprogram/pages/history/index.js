@@ -15,7 +15,7 @@
 /* harmony import */ var _tarojs_taro__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @tarojs/taro */ "./node_modules/.pnpm/@tarojs+taro@3.6.31_@tarojs+helper@3.6.31_@tarojs+runtime@3.6.31_@tarojs+shared@3.6.31__6625a75cd3c8524043bddd6a131c5a64/node_modules/@tarojs/taro/index.js");
 /* harmony import */ var _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_tarojs_taro__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.production.min.js");
-/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../data */ "./src/data.ts");
+/* harmony import */ var _services_storage__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../services/storage */ "./src/services/storage.ts");
 /* harmony import */ var _translations__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../translations */ "./src/translations.ts");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react-jsx-runtime.production.min.js");
 
@@ -26,20 +26,40 @@
 
 
 function History() {
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(_data__WEBPACK_IMPORTED_MODULE_4__.MOCK_WORDS),
-    _useState2 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState, 1),
-    words = _useState2[0];
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)([]),
+    _useState2 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState, 2),
+    words = _useState2[0],
+    setWords = _useState2[1];
   var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)('en'),
     _useState4 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState3, 2),
     language = _useState4[0],
     setLanguage = _useState4[1];
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(_services_storage__WEBPACK_IMPORTED_MODULE_4__.StorageService.getUserInfo()),
+    _useState6 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState5, 2),
+    userInfo = _useState6[0],
+    setUserInfo = _useState6[1];
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(5),
+    _useState8 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState7, 2),
+    streak = _useState8[0],
+    setStreak = _useState8[1]; // Mock streak
+
   (0,_tarojs_taro__WEBPACK_IMPORTED_MODULE_2__.useDidShow)(function () {
     var stored = _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().getStorageSync('language');
-    if (stored) setLanguage(stored);
+    if (stored) {
+      setLanguage(stored);
+      var currentT = _translations__WEBPACK_IMPORTED_MODULE_5__.translations[stored];
+      _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().setNavigationBarTitle({
+        title: currentT.history
+      });
+    } else {
+      _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().setNavigationBarTitle({
+        title: _translations__WEBPACK_IMPORTED_MODULE_5__.translations['en'].history
+      });
+    }
+    setWords(_services_storage__WEBPACK_IMPORTED_MODULE_4__.StorageService.getWords());
+    setUserInfo(_services_storage__WEBPACK_IMPORTED_MODULE_4__.StorageService.getUserInfo());
   });
   var t = _translations__WEBPACK_IMPORTED_MODULE_5__.translations[language];
-  var streak = 5; // Mock
-
   var goToSettings = function goToSettings() {
     _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().navigateTo({
       url: '/pages/settings/index'
@@ -165,10 +185,10 @@ function History() {
           className: "flex flex-row items-center gap-2 px-4 py-3 bg-surface-dark border-b border-border-dark",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Image, {
             className: "size-6 rounded-full",
-            src: "https://picsum.photos/seed/user/50"
+            src: userInfo.avatarUrl
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
             className: "text-sm font-semibold text-white",
-            children: "user"
+            children: userInfo.nickName
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
             className: "text-xs text-text-secondary truncate",
             children: "feat: synced memory store"

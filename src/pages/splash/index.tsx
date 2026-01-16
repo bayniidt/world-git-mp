@@ -29,18 +29,18 @@ export default function Splash() {
         <View className="relative mb-6">
           <View className="absolute inset-0 bg-primary blur-2xl opacity-10 rounded-full scale-150"></View>
           <View className="relative w-32 h-32 bg-[#1c2e24] shadow-xl rounded-3xl flex items-center justify-center border border-white/5 p-6">
-            <Text className="material-symbols-outlined text-primary text-[56px] font-bold">menu_book</Text>
+            <Text className="text-primary text-[56px] font-bold">📚</Text>
           </View>
         </View>
-        <Text className="text-white tracking-tight text-[40px] font-extrabold leading-tight text-center block">WordGit</Text>
-        <Text className="text-[#9db9a8] text-sm font-medium opacity-80 mt-1 block">v1.0.0</Text>
+        <Text className="text-white tracking-tight text-[48px] font-extrabold leading-tight text-center block">WordGit</Text>
+        <Text className="text-[#9db9a8] text-base font-medium opacity-80 mt-1 block">v1.0.0</Text>
       </View>
 
       <View className="z-10 w-full max-w-xs pb-12">
         <View className="flex flex-col gap-2">
           <View className="flex flex-row justify-between items-end px-1">
-            <Text className="text-[#9db9a8] text-[10px] font-bold uppercase tracking-widest">Committing to Repo...</Text>
-            <Text className="material-symbols-outlined text-primary text-sm animate-spin">sync</Text>
+            <Text className="text-[#9db9a8] text-xs font-bold uppercase tracking-widest">Committing to Repo...</Text>
+            <Text className="text-primary text-lg animate-spin">⟳</Text>
           </View>
           <View className="flex flex-row gap-1.5 h-2">
             {[...Array(7)].map((_, i) => (

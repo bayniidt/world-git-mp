@@ -1,19 +1,19 @@
-
-import { Button, Image, Text, View } from '@tarojs/components'; // Standard Taro components
+import { Button, Image, Input, Text, View } from '@tarojs/components'; // Standard Taro components
 import Taro, { useDidShow, useLoad } from '@tarojs/taro'
 import { useState } from 'react'
 import ContributionGraph from '../../components/ContributionGraph'
+import { StorageService, UserInfo } from '../../services/storage'
 import { translations } from '../../translations'
 import { Language, WordEntry } from '../../types'
 
-import { MOCK_WORDS } from '../../data'
-
 
 export default function Home() {
-  const [words, setWords] = useState<WordEntry[]>(MOCK_WORDS)
+  const [words, setWords] = useState<WordEntry[]>([])
   const [language, setLanguage] = useState<Language>('en')
-  const [streak] = useState(5)
+  const [userInfo, setUserInfo] = useState<UserInfo>(StorageService.getUserInfo())
+  const [streak, setStreak] = useState(5) // Still mock streak for now or calculate from activity
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [graphData, setGraphData] = useState<number[][] | undefined>(undefined)
   
   const t = translations[language];
 
@@ -22,11 +22,55 @@ export default function Home() {
   })
 
   useDidShow(() => {
-    const stored = Taro.getStorageSync('language')
+    const stored = Taro.getStorageSync('language') as Language
     if (stored) {
-      setLanguage(stored as Language)
+      setLanguage(stored)
+      const currentT = translations[stored]
+      Taro.setNavigationBarTitle({ title: currentT.home })
+    } else {
+       // fallback for default 'en' state
+       Taro.setNavigationBarTitle({ title: translations['en'].home })
     }
+
+    // Refresh Data
+    setWords(StorageService.getWords())
+    
+    // Check user info
+    const info = StorageService.getUserInfo()
+    setUserInfo(info)
+    
+    // Hint for new users
+    if (info.nickName === 'WeChat User' || info.avatarUrl.includes('gray')) {
+        // Simple heuristic to detect default user
+        // Avoid showing every time if they just don't want to change it? 
+        // For now, just show it once per session or just show it.
+        // Let's use a subtle toast so it's not annoying.
+         setTimeout(() => {
+            Taro.showToast({ title: '点头像可修改资料', icon: 'none', duration: 2000 })
+         }, 500)
+    }
+
+    setGraphData(StorageService.getActivityData())
+    
+    // Simple streak calc: check if today has activity? 
+    // For now we keep the mock or static streak logic as it requires complex consecutive day check.
   })
+
+  const onChooseAvatar = (e) => {
+    const { avatarUrl } = e.detail
+    if (avatarUrl) {
+        const updated = StorageService.updateUserInfo({ avatarUrl })
+        setUserInfo(updated)
+    }
+  }
+
+  const onNicknameBlur = (e) => {
+      const val = e.detail.value
+      if (val && val !== userInfo.nickName) {
+          const updated = StorageService.updateUserInfo({ nickName: val })
+          setUserInfo(updated)
+      }
+  }
 
   const playAudio = (text: string, id: string) => {
     setActiveId(id)
@@ -64,16 +108,32 @@ export default function Home() {
       <View className="flex flex-row items-center justify-between mb-6" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <View className="flex flex-row items-center gap-3" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px' }}>
           <View className="relative" style={{ position: 'relative' }}>
-            <Image 
-                className="size-10 rounded-full border-2 border-white/10" 
-                src="https://picsum.photos/seed/learner/100" 
-                style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.1)' }}
-            />
+            <Button 
+                openType="chooseAvatar" 
+                onChooseAvatar={onChooseAvatar}
+                className="p-0 border-0 bg-transparent flex items-center justify-center m-0"
+                style={{ width: '40px', height: '40px', padding: 0, backgroundColor: 'transparent', lineHeight: 0, borderRadius: '50%', overflow: 'hidden' }}
+                plain={true}
+            >
+                <Image 
+                    className="size-10 rounded-full border-2 border-white/10 w-full h-full" 
+                    src={userInfo.avatarUrl} 
+                    mode="aspectFill"
+                    style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid rgba(255,255,255,0.1)' }}
+                />
+            </Button>
             <View className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-primary border-2 border-background-dark" style={{ position: 'absolute', bottom: '-2px', right: '-2px', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#13ec6d', border: '2px solid #0d1117' }}></View>
           </View>
           <View>
             <Text className="text-xs font-medium text-gray-400 block" style={{ fontSize: '12px', color: '#8b949e', display: 'block' }}>{t.welcome}</Text>
-            <Text className="text-sm font-bold leading-tight text-white block" style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff', display: 'block' }}>{t.learner}</Text>
+            {/* Nickname Input */}
+            <Input 
+                type="nickname" 
+                className="text-sm font-bold leading-tight text-white block min-w-[60px]" 
+                style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff', display: 'block', minWidth: '60px' }}
+                value={userInfo.nickName}
+                onBlur={onNicknameBlur}
+            />
           </View>
         </View>
         <View className="flex flex-row items-center gap-1 rounded-full bg-white/5 border border-white/5 px-3 py-1.5" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '4px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '999px', padding: '6px 12px' }}>
@@ -82,13 +142,18 @@ export default function Home() {
         </View>
       </View>
 
-      {/* Activity - Shrunken */}
-      <View className="bg-surface-dark border border-white/5 rounded-xl p-3 shadow-sm mb-6" style={{ backgroundColor: '#161b22', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '12px', marginBottom: '24px' }}>
-        <View className="flex flex-row items-center justify-between mb-2 px-1" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+      {/* Activity - Compact */}
+      <View className="bg-surface-dark border border-white/5 rounded-xl p-2 shadow-sm mb-4" style={{ backgroundColor: '#161b22', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '8px', marginBottom: '16px' }}>
+        <View className="flex flex-row items-center justify-between mb-1 px-1" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
           <Text className="text-xs font-bold text-gray-400 uppercase" style={{ fontSize: '12px', fontWeight: 'bold', color: '#8b949e', textTransform: 'uppercase' }}>{t.activity}</Text>
-          <Text className="text-xs text-gray-500" style={{ fontSize: '10px', color: '#6b7280' }}>{t.last30Days}</Text>
+          <View className="flex flex-row items-center gap-1" style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
+             <View className="size-2 rounded-sm" style={{ width: 8, height: 8, backgroundColor: '#30363d' }}></View>
+             <View className="size-2 rounded-sm" style={{ width: 8, height: 8, backgroundColor: 'rgba(19, 236, 109, 0.3)' }}></View>
+             <View className="size-2 rounded-sm" style={{ width: 8, height: 8, backgroundColor: 'rgba(19, 236, 109, 0.6)' }}></View>
+             <View className="size-2 rounded-sm" style={{ width: 8, height: 8, backgroundColor: '#13ec6d' }}></View>
+          </View>
         </View>
-        <ContributionGraph />
+        <ContributionGraph data={graphData} />
       </View>
 
       {/* Add Word Button - New */}

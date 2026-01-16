@@ -1,27 +1,29 @@
 import { Text, View } from '@tarojs/components'
-import Taro, { useDidShow, useLoad } from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
 import { translations } from '../../translations'
 import { Language } from '../../types'
 
 export default function Settings() {
   const [language, setLanguageState] = useState<Language>('en')
-  const [navBarHeight, setNavBarHeight] = useState(0)
-  const [statusBarHeight, setStatusBarHeight] = useState(0)
   
   const updateLanguageFromStorage = () => {
     const stored = Taro.getStorageSync('language') as Language
     if (stored) {
       console.log('Settings: syncing language from storage:', stored)
       setLanguageState(stored)
-      updateTabBar(stored)
+      updatePage(stored)
     }
   }
 
-  const updateTabBar = (lang: Language) => {
+  const updatePage = (lang: Language) => {
     const t = translations[lang]
     if (!t) return
+
+    // Update Title
+    Taro.setNavigationBarTitle({ title: t.settings })
     
+    // Update TabBar
     const tabs = [
         { index: 0, text: t.home },
         { index: 1, text: t.learn },
@@ -39,62 +41,23 @@ export default function Settings() {
     })
   }
 
-  useLoad(() => {
-    const sysInfo = Taro.getSystemInfoSync()
-    const menuButtonInfo = Taro.getMenuButtonBoundingClientRect()
-    
-    const statusHeight = sysInfo.statusBarHeight || 20
-    setStatusBarHeight(statusHeight)
-    
-    // Calculate accurate nav bar height to align with capsule
-    // The height of the clickable area usually matches the capsule height + padding
-    // standard is usually 44px on iOS, 48px on Android, but we can calculate:
-    const navContentHeight = (menuButtonInfo.top - statusHeight) * 2 + menuButtonInfo.height
-    setNavBarHeight(navContentHeight > 0 ? navContentHeight : 44)
-
-    updateLanguageFromStorage()
-  })
-
   useDidShow(() => {
     updateLanguageFromStorage()
   })
 
+  // Also update when language is manually set
   const setLanguage = (l: Language) => {
     console.log('Settings: setting language to', l)
     setLanguageState(l)
     Taro.setStorageSync('language', l)
-    updateTabBar(l)
+    updatePage(l)
     Taro.showToast({ title: 'Language updated', icon: 'success', duration: 1000 })
-  }
-
-  const goHome = () => {
-     Taro.switchTab({ url: '/pages/home/index' })
   }
 
   const t = translations[language]
 
   return (
-    <View className="bg-background-dark min-h-screen pb-24 animate-in slide-in-from-right-4 duration-300">
-      {/* Header Container */}
-      <View className="bg-background-dark sticky top-0 z-20 border-b border-border-dark">
-        {/* Status Bar Spacer */}
-        <View style={{ height: `${statusBarHeight}px` }} />
-        {/* Navigation Bar Content */}
-        <View 
-            className="flex flex-row items-center px-4 relative"
-            style={{ height: `${navBarHeight}px` }}
-        >
-            <View 
-                onClick={goHome} 
-                className="flex items-center justify-center size-8 rounded-full bg-surface-dark border border-border-dark text-text-secondary mr-3 active:opacity-70"
-                style={{ width: '32px', height: '32px' }}
-            >
-              <Text className="text-lg font-bold">←</Text>
-            </View>
-            <Text className="text-lg font-bold leading-tight text-white">{t.settings}</Text>
-        </View>
-      </View>
-
+    <View className="bg-background-dark min-h-screen pb-24">
       <View className="px-4 py-6 flex flex-col gap-6">
         <View className="space-y-4 flex flex-col gap-4">
           <Text className="text-xs font-bold text-text-secondary uppercase tracking-wider px-1">{t.language}</Text>

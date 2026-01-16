@@ -64,15 +64,15 @@ function Splash() {
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_2__.View, {
           className: "relative w-32 h-32 bg-_b_h1c2e24_B shadow-xl rounded-3xl flex items-center justify-center border border-white_f5 p-6",
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_2__.Text, {
-            className: "material-symbols-outlined text-primary text-_b56px_B font-bold",
-            children: "menu_book"
+            className: "text-primary text-_b56px_B font-bold",
+            children: "\uD83D\uDCDA"
           })
         })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_2__.Text, {
-        className: "text-white tracking-tight text-_b40px_B font-extrabold leading-tight text-center block",
+        className: "text-white tracking-tight text-_b48px_B font-extrabold leading-tight text-center block",
         children: "WordGit"
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_2__.Text, {
-        className: "text-_b_h9db9a8_B text-sm font-medium opacity-80 mt-1 block",
+        className: "text-_b_h9db9a8_B text-base font-medium opacity-80 mt-1 block",
         children: "v1.0.0"
       })]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_2__.View, {
@@ -82,11 +82,11 @@ function Splash() {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_2__.View, {
           className: "flex flex-row justify-between items-end px-1",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_2__.Text, {
-            className: "text-_b_h9db9a8_B text-_b10px_B font-bold uppercase tracking-widest",
+            className: "text-_b_h9db9a8_B text-xs font-bold uppercase tracking-widest",
             children: "Committing to Repo..."
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_2__.Text, {
-            className: "material-symbols-outlined text-primary text-sm animate-spin",
-            children: "sync"
+            className: "text-primary text-lg animate-spin",
+            children: "\u27F3"
           })]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_2__.View, {
           className: "flex flex-row gap-1_d5 h-2",

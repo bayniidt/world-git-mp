@@ -11,7 +11,8 @@ export default defineAppConfig({
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#0d1117',
     navigationBarTitleText: 'WordGit',
-    navigationBarTextStyle: 'white'
+    navigationBarTextStyle: 'white',
+    backgroundColor: '#0d1117'
   },
   tabBar: {
     color: "#8b949e",

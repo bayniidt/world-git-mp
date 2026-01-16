@@ -1,7 +1,8 @@
 import { Button, Input, Text, Textarea, View } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
 import { fetchWordDetails } from '../../services/gemini'
+import { StorageService } from '../../services/storage'
 import { translations } from '../../translations'
 import { Language } from '../../types'
 
@@ -13,9 +14,19 @@ export default function NewEntry() {
   const [partOfSpeech, setPartOfSpeech] = useState('Noun')
   const [labels, setLabels] = useState<string[]>(['vocabulary', 'learning'])
   const [isFetching, setIsFetching] = useState(false)
-  const [language] = useState<Language>('en')
+  const [language, setLanguage] = useState<Language>('en')
   
   const t = translations[language]
+  useDidShow(() => {
+    const stored = Taro.getStorageSync('language') as Language
+    if (stored) {
+      setLanguage(stored)
+      const currentT = translations[stored]
+      Taro.setNavigationBarTitle({ title: currentT.newEntry })
+    } else {
+      Taro.setNavigationBarTitle({ title: translations['en'].newEntry })
+    }
+  })
 
   const handleFetchAI = async () => {
     if (!word) return
@@ -35,25 +46,51 @@ export default function NewEntry() {
     }
   }
 
-  const navigateBack = () => {
-    Taro.navigateBack()
+  const handleCommit = async () => {
+     if (!word) return
+     
+     await StorageService.addWord({
+         word,
+         definition,
+         phonetic,
+         example,
+         partOfSpeech,
+         labels
+     })
+
+     Taro.showToast({ title: 'Saved!', icon: 'success' })
+     
+     // Delay navigate back to allow toast to be seen
+     setTimeout(() => {
+         Taro.navigateBack()
+     }, 1000)
   }
 
-  const handleCommit = () => {
-     // TODO: Save data
-     Taro.showToast({ title: 'Saved!', icon: 'success' })
-     setTimeout(() => Taro.navigateBack(), 1000)
+  const handleAddLabel = () => {
+      // @ts-ignore
+      Taro.showModal({
+          title: t.addLabel || 'Add Label',
+          editable: true,
+          placeholderText: 'e.g. important',
+          success: (res) => {
+              // @ts-ignore
+              if (res.confirm && res.content) {
+                  // @ts-ignore
+                  const newLabel = res.content.trim()
+                  if (newLabel && !labels.includes(newLabel)) {
+                      setLabels([...labels, newLabel])
+                  }
+              }
+          }
+      })
+  }
+
+  const handleRemoveLabel = (labelToRemove: string) => {
+      setLabels(labels.filter(l => l !== labelToRemove))
   }
 
   return (
     <View className="flex flex-col min-h-screen bg-background-dark pb-10">
-      <View className="flex flex-row items-center bg-background-dark/80 backdrop-blur-md p-4 border-b border-border-dark sticky top-0 z-10">
-        <Button onClick={navigateBack} className="text-text-secondary size-10 flex items-center justify-center bg-transparent border-0 p-0 m-0 leading-none">
-          <Text className="text-lg">✕</Text>
-        </Button>
-        <Text className="text-lg font-semibold flex-1 text-center pr-10 text-white">{t.newEntry}</Text>
-      </View>
-
       <View className="flex-1 p-6 flex flex-col gap-6">
         <View className="flex flex-col gap-2">
           <Text className="text-xs font-bold text-text-secondary uppercase tracking-wider pl-1 block">{t.word}</Text>
@@ -88,7 +125,7 @@ export default function NewEntry() {
           <Textarea 
             value={definition}
             onInput={(e) => setDefinition(e.detail.value)}
-            className="w-full h-[120px] rounded-md bg-surface-dark border border-border-dark text-white p-4 font-mono text-sm leading-relaxed box-border" 
+            className="w-full h-[160px] rounded-md bg-surface-dark border border-border-dark text-white p-4 font-mono text-sm leading-relaxed box-border" 
             placeholder="Add a detailed description..."
             placeholderStyle="color: #8b949e"
             maxlength={-1}
@@ -100,7 +137,7 @@ export default function NewEntry() {
           <Textarea 
             value={example}
             onInput={(e) => setExample(e.detail.value)}
-            className="w-full h-[80px] rounded-md bg-surface-dark border border-border-dark text-white p-3 font-mono text-sm leading-relaxed box-border" 
+            className="w-full h-[120px] rounded-md bg-surface-dark border border-border-dark text-white p-3 font-mono text-sm leading-relaxed box-border" 
             placeholder="Used in a sentence..."
             placeholderStyle="color: #8b949e"
              maxlength={-1}
@@ -111,11 +148,22 @@ export default function NewEntry() {
           <Text className="text-xs font-bold text-text-secondary uppercase tracking-wider border-b border-border-dark pb-2 block">{t.labels}</Text>
           <View className="flex flex-row flex-wrap gap-2">
             {labels.map(label => (
-              <View key={label} className="flex flex-row items-center gap-1.5 rounded-full bg-surface-dark border border-border-dark px-3 py-1">
-                <View className="size-1.5 rounded-full bg-primary" style={{ width: 6, height: 6, backgroundColor: '#13ec6d' }}></View>
-                <Text className="text-[10px] font-bold text-white uppercase">{label}</Text>
+              <View 
+                key={label} 
+                onClick={() => handleRemoveLabel(label)}
+                className="flex flex-row items-center gap-2 rounded-full bg-surface-dark border border-border-dark px-3 py-1.5 active:opacity-70"
+              >
+                <View className="size-2 rounded-full bg-primary" style={{ width: 8, height: 8, backgroundColor: '#13ec6d' }}></View>
+                <Text className="text-xs font-bold text-white uppercase">{label}</Text>
               </View>
             ))}
+            
+            <View 
+                onClick={handleAddLabel}
+                className="flex flex-row items-center justify-center rounded-full bg-surface-dark border border-dashed border-text-secondary px-3 py-1.5 active:bg-white/5"
+            >
+                <Text className="text-xs font-bold text-text-secondary uppercase">+ Add</Text>
+            </View>
           </View>
         </View>
       </View>

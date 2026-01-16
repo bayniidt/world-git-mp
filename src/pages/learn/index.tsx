@@ -5,22 +5,27 @@ import { useState } from 'react'
 import { translations } from '../../translations'
 import { Language, WordEntry } from '../../types'
 
-import { MOCK_WORDS } from '../../data'
+import { StorageService } from '../../services/storage'
 
-// Needs mock data or global state, repeating mock for now to be self-contained
-
+// ...
 
 export default function Learn() {
-  const [words] = useState<WordEntry[]>(MOCK_WORDS)
+  const [words, setWords] = useState<WordEntry[]>([])
   // Default to English for now, ideally from global store
   const [language, setLanguage] = useState<Language>('en')
   const [activeId, setActiveId] = useState<string | null>(null)
 
   useDidShow(() => {
-    const stored = Taro.getStorageSync('language')
+    const stored = Taro.getStorageSync('language') as Language
     if (stored) {
-      setLanguage(stored as Language)
+      setLanguage(stored)
+      const currentT = translations[stored]
+      Taro.setNavigationBarTitle({ title: currentT.learn })
+    } else {
+      Taro.setNavigationBarTitle({ title: translations['en'].learn })
     }
+    
+    setWords(StorageService.getWords())
   })
   const t = translations[language]
 

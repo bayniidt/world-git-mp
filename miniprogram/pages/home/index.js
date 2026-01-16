@@ -16,8 +16,8 @@
 /* harmony import */ var _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_tarojs_taro__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.production.min.js");
 /* harmony import */ var _components_ContributionGraph__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../components/ContributionGraph */ "./src/components/ContributionGraph.tsx");
-/* harmony import */ var _translations__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../translations */ "./src/translations.ts");
-/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../data */ "./src/data.ts");
+/* harmony import */ var _services_storage__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../services/storage */ "./src/services/storage.ts");
+/* harmony import */ var _translations__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../translations */ "./src/translations.ts");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react-jsx-runtime.production.min.js");
 
  // Standard Taro components
@@ -28,7 +28,7 @@
 
 
 function Home() {
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(_data__WEBPACK_IMPORTED_MODULE_6__.MOCK_WORDS),
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)([]),
     _useState2 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState, 2),
     words = _useState2[0],
     setWords = _useState2[1];
@@ -36,14 +36,23 @@ function Home() {
     _useState4 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState3, 2),
     language = _useState4[0],
     setLanguage = _useState4[1];
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(5),
-    _useState6 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState5, 1),
-    streak = _useState6[0];
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(null),
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(_services_storage__WEBPACK_IMPORTED_MODULE_5__.StorageService.getUserInfo()),
+    _useState6 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState5, 2),
+    userInfo = _useState6[0],
+    setUserInfo = _useState6[1];
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(5),
     _useState8 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState7, 2),
-    activeId = _useState8[0],
-    setActiveId = _useState8[1];
-  var t = _translations__WEBPACK_IMPORTED_MODULE_5__.translations[language];
+    streak = _useState8[0],
+    setStreak = _useState8[1]; // Still mock streak for now or calculate from activity
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(null),
+    _useState0 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState9, 2),
+    activeId = _useState0[0],
+    setActiveId = _useState0[1];
+  var _useState1 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(undefined),
+    _useState10 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState1, 2),
+    graphData = _useState10[0],
+    setGraphData = _useState10[1];
+  var t = _translations__WEBPACK_IMPORTED_MODULE_6__.translations[language];
   (0,_tarojs_taro__WEBPACK_IMPORTED_MODULE_2__.useLoad)(function () {
     console.log('Page loaded.');
   });
@@ -51,8 +60,61 @@ function Home() {
     var stored = _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().getStorageSync('language');
     if (stored) {
       setLanguage(stored);
+      var currentT = _translations__WEBPACK_IMPORTED_MODULE_6__.translations[stored];
+      _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().setNavigationBarTitle({
+        title: currentT.home
+      });
+    } else {
+      // fallback for default 'en' state
+      _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().setNavigationBarTitle({
+        title: _translations__WEBPACK_IMPORTED_MODULE_6__.translations['en'].home
+      });
     }
+
+    // Refresh Data
+    setWords(_services_storage__WEBPACK_IMPORTED_MODULE_5__.StorageService.getWords());
+
+    // Check user info
+    var info = _services_storage__WEBPACK_IMPORTED_MODULE_5__.StorageService.getUserInfo();
+    setUserInfo(info);
+
+    // Hint for new users
+    if (info.nickName === 'WeChat User' || info.avatarUrl.includes('gray')) {
+      // Simple heuristic to detect default user
+      // Avoid showing every time if they just don't want to change it? 
+      // For now, just show it once per session or just show it.
+      // Let's use a subtle toast so it's not annoying.
+      setTimeout(function () {
+        _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().showToast({
+          title: '点头像可修改资料',
+          icon: 'none',
+          duration: 2000
+        });
+      }, 500);
+    }
+    setGraphData(_services_storage__WEBPACK_IMPORTED_MODULE_5__.StorageService.getActivityData());
+
+    // Simple streak calc: check if today has activity? 
+    // For now we keep the mock or static streak logic as it requires complex consecutive day check.
   });
+  var onChooseAvatar = function onChooseAvatar(e) {
+    var avatarUrl = e.detail.avatarUrl;
+    if (avatarUrl) {
+      var updated = _services_storage__WEBPACK_IMPORTED_MODULE_5__.StorageService.updateUserInfo({
+        avatarUrl: avatarUrl
+      });
+      setUserInfo(updated);
+    }
+  };
+  var onNicknameBlur = function onNicknameBlur(e) {
+    var val = e.detail.value;
+    if (val && val !== userInfo.nickName) {
+      var updated = _services_storage__WEBPACK_IMPORTED_MODULE_5__.StorageService.updateUserInfo({
+        nickName: val
+      });
+      setUserInfo(updated);
+    }
+  };
   var playAudio = function playAudio(text, id) {
     setActiveId(id);
     var innerAudioContext = _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().createInnerAudioContext();
@@ -112,15 +174,31 @@ function Home() {
           style: {
             position: 'relative'
           },
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Image, {
-            className: "size-10 rounded-full border-2 border-white_f10",
-            src: "https://picsum.photos/seed/learner/100",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
+            openType: "chooseAvatar",
+            onChooseAvatar: onChooseAvatar,
+            className: "p-0 border-0 bg-transparent flex items-center justify-center m-0",
             style: {
               width: '40px',
               height: '40px',
+              padding: 0,
+              backgroundColor: 'transparent',
+              lineHeight: 0,
               borderRadius: '50%',
-              border: '2px solid rgba(255,255,255,0.1)'
-            }
+              overflow: 'hidden'
+            },
+            plain: true,
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Image, {
+              className: "size-10 rounded-full border-2 border-white_f10 w-full h-full",
+              src: userInfo.avatarUrl,
+              mode: "aspectFill",
+              style: {
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                border: '2px solid rgba(255,255,255,0.1)'
+              }
+            })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
             className: "absolute -bottom-0_d5 -right-0_d5 size-3 rounded-full bg-primary border-2 border-background-dark",
             style: {
@@ -143,15 +221,18 @@ function Home() {
               display: 'block'
             },
             children: t.welcome
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
-            className: "text-sm font-bold leading-tight text-white block",
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Input, {
+            type: "nickname",
+            className: "text-sm font-bold leading-tight text-white block min-w-_b60px_B",
             style: {
               fontSize: '14px',
               fontWeight: 'bold',
               color: '#fff',
-              display: 'block'
+              display: 'block',
+              minWidth: '60px'
             },
-            children: t.learner
+            value: userInfo.nickName,
+            onBlur: onNicknameBlur
           })]
         })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
@@ -184,21 +265,21 @@ function Home() {
         })]
       })]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
-      className: "bg-surface-dark border border-white_f5 rounded-xl p-3 shadow-sm mb-6",
+      className: "bg-surface-dark border border-white_f5 rounded-xl p-2 shadow-sm mb-4",
       style: {
         backgroundColor: '#161b22',
         border: '1px solid rgba(255,255,255,0.05)',
         borderRadius: '12px',
-        padding: '12px',
-        marginBottom: '24px'
+        padding: '8px',
+        marginBottom: '16px'
       },
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
-        className: "flex flex-row items-center justify-between mb-2 px-1",
+        className: "flex flex-row items-center justify-between mb-1 px-1",
         style: {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '8px'
+          marginBottom: '4px'
         },
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
           className: "text-xs font-bold text-gray-400 uppercase",
@@ -209,15 +290,46 @@ function Home() {
             textTransform: 'uppercase'
           },
           children: t.activity
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.Text, {
-          className: "text-xs text-gray-500",
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+          className: "flex flex-row items-center gap-1",
           style: {
-            fontSize: '10px',
-            color: '#6b7280'
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '4px'
           },
-          children: t.last30Days
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+            className: "size-2 rounded-sm",
+            style: {
+              width: 8,
+              height: 8,
+              backgroundColor: '#30363d'
+            }
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+            className: "size-2 rounded-sm",
+            style: {
+              width: 8,
+              height: 8,
+              backgroundColor: 'rgba(19, 236, 109, 0.3)'
+            }
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+            className: "size-2 rounded-sm",
+            style: {
+              width: 8,
+              height: 8,
+              backgroundColor: 'rgba(19, 236, 109, 0.6)'
+            }
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
+            className: "size-2 rounded-sm",
+            style: {
+              width: 8,
+              height: 8,
+              backgroundColor: '#13ec6d'
+            }
+          })]
         })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_ContributionGraph__WEBPACK_IMPORTED_MODULE_4__["default"], {})]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_ContributionGraph__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        data: graphData
+      })]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_1__.View, {
       className: "mb-6",
       style: {
@@ -386,12 +498,11 @@ function Home() {
 
 var ContributionGraph = function ContributionGraph(_ref) {
   var _ref$columns = _ref.columns,
-    columns = _ref$columns === void 0 ? 7 : _ref$columns,
+    columns = _ref$columns === void 0 ? 15 : _ref$columns,
     _ref$rows = _ref.rows,
     rows = _ref$rows === void 0 ? 5 : _ref$rows,
     data = _ref.data;
   // Generate random data if none provided for visual effect
-  // Note: fixed data generation logic to match structure
   var graphData = data || Array.from({
     length: columns
   }, function () {
@@ -401,13 +512,11 @@ var ContributionGraph = function ContributionGraph(_ref) {
       return Math.floor(Math.random() * 4);
     });
   });
+  var actualColumns = graphData.length;
   var getIntensityClass = function getIntensityClass(level) {
-    // Mapping tailwind classes to inline styles or assuming global css
-    // Using inline styles for simplicity in this port to ensure it works without complex tailwind setup
     switch (level) {
       case 0:
         return 'bg-gray-200';
-      // dark:bg-white/5 handled via conditional?
       case 1:
         return 'bg-primary-30';
       case 2:
@@ -418,76 +527,32 @@ var ContributionGraph = function ContributionGraph(_ref) {
         return 'bg-gray-200';
     }
   };
-
-  // We will assume basic global CSS or utility classes are available.
-  // Converting div -> View
-
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-    className: "flex flex-col gap-2",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-      className: "grid grid-cols-7 gap-1 w-full",
-      style: {
-        display: 'grid',
-        gridTemplateColumns: "repeat(".concat(columns, ", 1fr)"),
-        gap: '6px',
-        paddingLeft: '8px',
-        paddingRight: '8px'
-      },
-      children: graphData.map(function (col, cIdx) {
-        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-          className: "flex flex-col gap-1",
-          children: col.map(function (level, rIdx) {
-            return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-              className: "flex-1 aspect-square rounded-sm ".concat(getIntensityClass(level)),
-              style: {
-                width: '100%',
-                aspectRatio: '1/1',
-                borderRadius: '2px',
-                backgroundColor: level === 0 ? '#30363d' : level === 1 ? 'rgba(19, 236, 109, 0.3)' : level === 2 ? 'rgba(19, 236, 109, 0.6)' : '#13ec6d'
-              }
-            }, rIdx);
-          })
-        }, cIdx);
-      })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-      className: "flex justify-between items-center text-xs text-gray-400 font-medium px-1 mt-1",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-        children: "Less"
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-        className: "flex gap-1 items-center",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-          className: "size-2 rounded-sm bg-gray-600",
-          style: {
-            width: 8,
-            height: 8,
-            backgroundColor: '#30363d'
-          }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-          className: "size-2 rounded-sm bg-primary-30",
-          style: {
-            width: 8,
-            height: 8,
-            backgroundColor: 'rgba(19, 236, 109, 0.3)'
-          }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-          className: "size-2 rounded-sm bg-primary-60",
-          style: {
-            width: 8,
-            height: 8,
-            backgroundColor: 'rgba(19, 236, 109, 0.6)'
-          }
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-          className: "size-2 rounded-sm bg-primary",
-          style: {
-            width: 8,
-            height: 8,
-            backgroundColor: '#13ec6d'
-          }
-        })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
-        children: "More"
-      })]
-    })]
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
+    className: "w-full",
+    style: {
+      display: 'grid',
+      gridTemplateColumns: "repeat(".concat(actualColumns, ", 1fr)"),
+      gap: '4px'
+    },
+    children: graphData.map(function (col, cIdx) {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
+        className: "flex flex-col gap-1",
+        style: {
+          gap: '4px'
+        },
+        children: col.map(function (level, rIdx) {
+          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_tarojs_components__WEBPACK_IMPORTED_MODULE_0__.View, {
+            className: "w-full aspect-square rounded-sm ".concat(getIntensityClass(level)),
+            style: {
+              width: '100%',
+              aspectRatio: '1/1',
+              borderRadius: '2px',
+              backgroundColor: level === 0 ? '#30363d' : level === 1 ? 'rgba(19, 236, 109, 0.3)' : level === 2 ? 'rgba(19, 236, 109, 0.6)' : '#13ec6d'
+            }
+          }, rIdx);
+        })
+      }, cIdx);
+    })
   });
 };
 /* harmony default export */ __webpack_exports__["default"] = (ContributionGraph);

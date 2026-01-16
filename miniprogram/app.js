@@ -16,7 +16,10 @@ require("./runtime");
 /* harmony import */ var _Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_createClass_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./node_modules/.pnpm/@babel+runtime@7.28.6/node_modules/@babel/runtime/helpers/esm/createClass.js */ "./node_modules/.pnpm/@babel+runtime@7.28.6/node_modules/@babel/runtime/helpers/esm/createClass.js");
 /* harmony import */ var _Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_callSuper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/.pnpm/@babel+runtime@7.28.6/node_modules/@babel/runtime/helpers/esm/callSuper.js */ "./node_modules/.pnpm/@babel+runtime@7.28.6/node_modules/@babel/runtime/helpers/esm/callSuper.js");
 /* harmony import */ var _Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_inherits_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/.pnpm/@babel+runtime@7.28.6/node_modules/@babel/runtime/helpers/esm/inherits.js */ "./node_modules/.pnpm/@babel+runtime@7.28.6/node_modules/@babel/runtime/helpers/esm/inherits.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react */ "./node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.production.min.js");
+/* harmony import */ var _tarojs_taro__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @tarojs/taro */ "./node_modules/.pnpm/@tarojs+taro@3.6.31_@tarojs+helper@3.6.31_@tarojs+runtime@3.6.31_@tarojs+shared@3.6.31__6625a75cd3c8524043bddd6a131c5a64/node_modules/@tarojs/taro/index.js");
+/* harmony import */ var _tarojs_taro__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_tarojs_taro__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react */ "./node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.production.min.js");
+
 
 
 
@@ -31,7 +34,20 @@ var App = /*#__PURE__*/function (_Component) {
   (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_inherits_js__WEBPACK_IMPORTED_MODULE_3__["default"])(App, _Component);
   return (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_createClass_js__WEBPACK_IMPORTED_MODULE_1__["default"])(App, [{
     key: "componentDidMount",
-    value: function componentDidMount() {}
+    value: function componentDidMount() {
+      if (true) {
+        _tarojs_taro__WEBPACK_IMPORTED_MODULE_4___default().cloud.init({
+          env: 'prod-3g3554g64c244795',
+          // User provided environment ID or I should ask? 
+          // Actually, if simply init() is called without env, it uses default.
+          // But best practice is to provide text. 
+          // Since I don't know the exact env ID, I'll use `traceUser: true`.
+          // 'quickstart-wx-cloud' in project.config.json might suggest a template, but not the ID.
+          // I will use default init for now.
+          traceUser: true
+        });
+      }
+    }
   }, {
     key: "componentDidShow",
     value: function componentDidShow() {}
@@ -45,7 +61,7 @@ var App = /*#__PURE__*/function (_Component) {
       return this.props.children;
     }
   }]);
-}(react__WEBPACK_IMPORTED_MODULE_4__.Component);
+}(react__WEBPACK_IMPORTED_MODULE_5__.Component);
 /* harmony default export */ __webpack_exports__["default"] = (App);
 
 /***/ }),
@@ -1054,7 +1070,7 @@ var react__WEBPACK_IMPORTED_MODULE_5___namespace_cache;
 
 
 
-var config = {"pages":["pages/splash/index","pages/home/index","pages/learn/index","pages/history/index","pages/new-entry/index","pages/settings/index"],"window":{"backgroundTextStyle":"light","navigationBarBackgroundColor":"#0d1117","navigationBarTitleText":"WordGit","navigationBarTextStyle":"white"},"tabBar":{"color":"#8b949e","selectedColor":"#13ec6d","backgroundColor":"#161b22","list":[{"pagePath":"pages/home/index","text":"Home","iconPath":"assets/home.png","selectedIconPath":"assets/home_active.png"},{"pagePath":"pages/learn/index","text":"Learn","iconPath":"assets/learn.png","selectedIconPath":"assets/learn_active.png"},{"pagePath":"pages/history/index","text":"History","iconPath":"assets/history.png","selectedIconPath":"assets/history_active.png"},{"pagePath":"pages/settings/index","text":"Settings","iconPath":"assets/settings.png","selectedIconPath":"assets/settings_active.png"}]}};
+var config = {"pages":["pages/splash/index","pages/home/index","pages/learn/index","pages/history/index","pages/new-entry/index","pages/settings/index"],"window":{"backgroundTextStyle":"light","navigationBarBackgroundColor":"#0d1117","navigationBarTitleText":"WordGit","navigationBarTextStyle":"white","backgroundColor":"#0d1117"},"tabBar":{"color":"#8b949e","selectedColor":"#13ec6d","backgroundColor":"#161b22","list":[{"pagePath":"pages/home/index","text":"Home","iconPath":"assets/home.png","selectedIconPath":"assets/home_active.png"},{"pagePath":"pages/learn/index","text":"Learn","iconPath":"assets/learn.png","selectedIconPath":"assets/learn_active.png"},{"pagePath":"pages/history/index","text":"History","iconPath":"assets/history.png","selectedIconPath":"assets/history_active.png"},{"pagePath":"pages/settings/index","text":"Settings","iconPath":"assets/settings.png","selectedIconPath":"assets/settings_active.png"}]}};
 _tarojs_runtime__WEBPACK_IMPORTED_MODULE_1__.window.__taroAppConfig = config
 var inst = App((0,_tarojs_plugin_framework_react_dist_runtime__WEBPACK_IMPORTED_MODULE_2__.createReactApp)(_node_modules_pnpm_tarojs_taro_loader_3_6_31_tarojs_runtime_3_6_31_tarojs_shared_3_6_31_types_react_18_3_27_postcss_8_5_6_node_modules_tarojs_taro_loader_lib_entry_cache_js_name_app_app_tsx__WEBPACK_IMPORTED_MODULE_4__["default"], /*#__PURE__*/ (react__WEBPACK_IMPORTED_MODULE_5___namespace_cache || (react__WEBPACK_IMPORTED_MODULE_5___namespace_cache = __webpack_require__.t(react__WEBPACK_IMPORTED_MODULE_5__, 2))), react_dom__WEBPACK_IMPORTED_MODULE_6__["default"], config))
 

@@ -1,21 +1,31 @@
 import { Image, Input, Text, View } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { useState } from 'react'
-import { MOCK_WORDS } from '../../data'
+import { StorageService, UserInfo } from '../../services/storage'
 import { translations } from '../../translations'
 import { Language, WordEntry } from '../../types'
 
 export default function History() {
-  const [words] = useState<WordEntry[]>(MOCK_WORDS)
+  const [words, setWords] = useState<WordEntry[]>([])
   const [language, setLanguage] = useState<Language>('en')
+  const [userInfo, setUserInfo] = useState<UserInfo>(StorageService.getUserInfo())
+  const [streak, setStreak] = useState(5) // Mock streak
   
   useDidShow(() => {
-    const stored = Taro.getStorageSync('language')
-    if (stored) setLanguage(stored as Language)
+    const stored = Taro.getStorageSync('language') as Language
+    if (stored) {
+        setLanguage(stored)
+        const currentT = translations[stored]
+        Taro.setNavigationBarTitle({ title: currentT.history })
+    } else {
+        Taro.setNavigationBarTitle({ title: translations['en'].history })
+    }
+
+    setWords(StorageService.getWords())
+    setUserInfo(StorageService.getUserInfo())
   })
 
   const t = translations[language]
-  const streak = 5 // Mock
 
   const goToSettings = () => {
     Taro.navigateTo({ url: '/pages/settings/index' })
@@ -77,8 +87,8 @@ export default function History() {
 
         <View className="border border-border-dark rounded-md overflow-hidden bg-surface-dark">
           <View className="flex flex-row items-center gap-2 px-4 py-3 bg-surface-dark border-b border-border-dark">
-            <Image className="size-6 rounded-full" src="https://picsum.photos/seed/user/50" />
-            <Text className="text-sm font-semibold text-white">user</Text>
+            <Image className="size-6 rounded-full" src={userInfo.avatarUrl} />
+            <Text className="text-sm font-semibold text-white">{userInfo.nickName}</Text>
             <Text className="text-xs text-text-secondary truncate">feat: synced memory store</Text>
           </View>
           <View>

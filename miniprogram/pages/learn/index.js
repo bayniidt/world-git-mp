@@ -16,7 +16,7 @@
 /* harmony import */ var _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_tarojs_taro__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react.production.min.js");
 /* harmony import */ var _translations__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../translations */ "./src/translations.ts");
-/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../data */ "./src/data.ts");
+/* harmony import */ var _services_storage__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../services/storage */ "./src/services/storage.ts");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/.pnpm/react@18.3.1/node_modules/react/cjs/react-jsx-runtime.production.min.js");
 
 
@@ -25,12 +25,13 @@
 
 
 
-// Needs mock data or global state, repeating mock for now to be self-contained
+// ...
 
 function Learn() {
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(_data__WEBPACK_IMPORTED_MODULE_5__.MOCK_WORDS),
-    _useState2 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState, 1),
-    words = _useState2[0];
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)([]),
+    _useState2 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState, 2),
+    words = _useState2[0],
+    setWords = _useState2[1];
   // Default to English for now, ideally from global store
   var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)('en'),
     _useState4 = (0,_Users_cc_Repository_world_git_mp_node_modules_pnpm_babel_runtime_7_28_6_node_modules_babel_runtime_helpers_esm_slicedToArray_js__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState3, 2),
@@ -44,7 +45,16 @@ function Learn() {
     var stored = _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().getStorageSync('language');
     if (stored) {
       setLanguage(stored);
+      var currentT = _translations__WEBPACK_IMPORTED_MODULE_4__.translations[stored];
+      _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().setNavigationBarTitle({
+        title: currentT.learn
+      });
+    } else {
+      _tarojs_taro__WEBPACK_IMPORTED_MODULE_2___default().setNavigationBarTitle({
+        title: _translations__WEBPACK_IMPORTED_MODULE_4__.translations['en'].learn
+      });
     }
+    setWords(_services_storage__WEBPACK_IMPORTED_MODULE_5__.StorageService.getWords());
   });
   var t = _translations__WEBPACK_IMPORTED_MODULE_4__.translations[language];
   var playAudio = function playAudio(text, id) {
