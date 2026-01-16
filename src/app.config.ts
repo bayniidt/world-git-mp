@@ -1,0 +1,47 @@
+export default defineAppConfig({
+  pages: [
+    'pages/splash/index',
+    'pages/home/index',
+    'pages/learn/index',
+    'pages/history/index',
+    'pages/new-entry/index',
+    'pages/settings/index'
+  ],
+  window: {
+    backgroundTextStyle: 'light',
+    navigationBarBackgroundColor: '#0d1117',
+    navigationBarTitleText: 'WordGit',
+    navigationBarTextStyle: 'white'
+  },
+  tabBar: {
+    color: "#8b949e",
+    selectedColor: "#13ec6d",
+    backgroundColor: "#161b22",
+    list: [
+      {
+        pagePath: "pages/home/index",
+        text: "Home",
+        iconPath: "assets/home.png", // placeholders
+        selectedIconPath: "assets/home_active.png"
+      },
+      {
+        pagePath: "pages/learn/index",
+        text: "Learn",
+        iconPath: "assets/learn.png",
+        selectedIconPath: "assets/learn_active.png"
+      },
+      {
+        pagePath: "pages/history/index",
+        text: "History",
+        iconPath: "assets/history.png",
+        selectedIconPath: "assets/history_active.png"
+      },
+      {
+        pagePath: "pages/settings/index",
+        text: "Settings",
+        iconPath: "assets/settings.png",
+        selectedIconPath: "assets/settings_active.png"
+      }
+    ]
+  }
+})
