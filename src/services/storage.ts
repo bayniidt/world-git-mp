@@ -88,7 +88,8 @@ export const StorageService = {
                 phonetic: word.phonetic,
                 example: word.example,
                 partOfSpeech: word.partOfSpeech,
-                labels: word.labels
+                labels: word.labels,
+                chineseDefinition: word.chineseDefinition
             }
         })
     } catch (err) {

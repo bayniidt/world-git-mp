@@ -9,6 +9,7 @@ import { Language } from '../../types'
 export default function NewEntry() {
   const [word, setWord] = useState('')
   const [definition, setDefinition] = useState('')
+  const [chineseDefinition, setChineseDefinition] = useState('')
   const [phonetic, setPhonetic] = useState('')
   const [example, setExample] = useState('')
   const [partOfSpeech, setPartOfSpeech] = useState('Noun')
@@ -55,7 +56,8 @@ export default function NewEntry() {
          phonetic,
          example,
          partOfSpeech,
-         labels
+         labels,
+         chineseDefinition
      })
 
      Taro.showToast({ title: 'Saved!', icon: 'success' })
@@ -116,6 +118,7 @@ export default function NewEntry() {
                 </Button>
             </View>
           </View>
+          {phonetic && <Text className="text-sm font-mono text-primary pl-2 pt-1">{phonetic}</Text>}
         </View>
 
         <View className="flex flex-col gap-2">
@@ -127,6 +130,21 @@ export default function NewEntry() {
             onInput={(e) => setDefinition(e.detail.value)}
             className="w-full h-[160px] rounded-md bg-surface-dark border border-border-dark text-white p-4 font-mono text-sm leading-relaxed box-border" 
             placeholder="Add a detailed description..."
+            placeholderStyle="color: #8b949e"
+            maxlength={-1}
+          />
+        </View>
+
+        <View className="flex flex-col gap-2">
+          <View className="flex flex-row items-center justify-between pl-1">
+            <Text className="text-xs font-bold text-text-secondary uppercase tracking-wider">{t.chineseDefinition || 'Chinese Definition'}</Text>
+          </View>
+          <Textarea 
+            value={chineseDefinition}
+            onInput={(e) => setChineseDefinition(e.detail.value)}
+            className="w-full h-[100px] rounded-md bg-surface-dark border border-border-dark text-white p-4 font-mono text-sm leading-relaxed box-border"
+            style={{ width: '100%', height: '100px', borderRadius: '6px', backgroundColor: '#161b22', border: '1px solid #30363d', color: '#fff', padding: '16px', fontSize: '14px', lineHeight: '1.6', boxSizing: 'border-box' }}
+            placeholder="中文释义..."
             placeholderStyle="color: #8b949e"
             maxlength={-1}
           />

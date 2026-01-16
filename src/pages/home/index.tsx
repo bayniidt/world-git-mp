@@ -192,9 +192,9 @@ export default function Home() {
               }}
             >
               <View className="flex flex-row items-start justify-between" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <View>
-                  <Text className={`text-lg font-bold mb-0.5 block ${activeId === word.id ? 'text-primary' : 'text-white'}`} style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '2px', display: 'block', color: activeId === word.id ? '#13ec6d' : '#fff' }}>{word.word}</Text>
-                  <Text className="font-mono text-xs text-gray-400 block" style={{ fontFamily: 'monospace', fontSize: '12px', color: '#8b949e', display: 'block' }}>{word.phonetic}</Text>
+                <View className="flex flex-row items-baseline gap-2" style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: '8px' }}>
+                  <Text className={`text-lg font-bold ${activeId === word.id ? 'text-primary' : 'text-white'}`} style={{ fontSize: '18px', fontWeight: 'bold', color: activeId === word.id ? '#13ec6d' : '#fff' }}>{word.word}</Text>
+                  <Text className="font-mono text-xs text-gray-400" style={{ fontFamily: 'monospace', fontSize: '12px', color: '#8b949e' }}>{word.phonetic}</Text>
                 </View>
                 <View 
                   onClick={(e) => { e.stopPropagation(); playAudio(word.word, word.id); }}
@@ -214,6 +214,7 @@ export default function Home() {
                 </View>
               </View>
               <Text className="text-xs text-gray-300 mt-1" style={{ fontSize: '12px', color: '#d0d7de', marginTop: '4px', lineHeight: '1.5' }}>{word.definition}</Text>
+              {word.chineseDefinition && <Text className="text-xs text-gray-400 mt-0.5" style={{ fontSize: '12px', color: '#8b949e', marginTop: '2px', lineHeight: '1.5' }}>{word.chineseDefinition}</Text>}
             </View>
           ))}
         </View>

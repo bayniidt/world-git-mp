@@ -11,7 +11,7 @@ exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   
   try {
-    const { word, definition, phonetic, example, partOfSpeech, labels } = event
+    const { word, definition, phonetic, example, partOfSpeech, labels, chineseDefinition } = event
     
     // Validate required fields
     if (!word || !definition) {
@@ -30,6 +30,7 @@ exports.main = async (event, context) => {
         example,
         partOfSpeech,
         labels,
+        chineseDefinition,
         createdAt: db.serverDate(),
         updatedAt: db.serverDate()
       }

@@ -1,5 +1,4 @@
 
-import { Language } from './types';
 
 export const translations = {
   en: {
@@ -38,7 +37,8 @@ export const translations = {
     dailyMix: "Daily Mix",
     write: "Write",
     preview: "Preview",
-    addLabel: "Add Label"
+    addLabel: "Add Label",
+    chineseDefinition: "Chinese Definition"
   },
   zh: {
     welcome: "欢迎回来，",
@@ -76,6 +76,7 @@ export const translations = {
     dailyMix: "每日回顾",
     write: "编辑",
     preview: "预览",
-    addLabel: "添加标签"
+    addLabel: "添加标签",
+    chineseDefinition: "中文释义"
   }
 };

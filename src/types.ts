@@ -10,6 +10,7 @@ export interface WordEntry {
   createdAt: string;
   lastReviewed: string | null;
   mastery: number; // 0-100
+  chineseDefinition?: string;
 }
 
 export type View = 'splash' | 'home' | 'history' | 'learn' | 'new-entry' | 'stats' | 'profile' | 'settings';
